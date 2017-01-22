@@ -1,20 +1,33 @@
 import subprocess
 import os
+import signal
 def test():
-    print("TEST")
-
+    print("HELLO")
+    
 class Debug:
 
     def __init__(self):
         pass
 
-    def load(self, path = "/bin/ls"):
-        print(os.geteuid())
-        self.process = subprocess.Popen(path)
-        if self.process:
-            print(self.process.pid)
+    def stop_process(self):
+        pid = os.getpid()
+        print(pid, "STOPPID")    
+   
+        os.kill(pid, signal.SIGSTOP)
+        print("AFTER")
+    def load(self, path):
+        print(os.getpid(), "FIRST")
+        self.process = subprocess.Popen(path, preexec_fn=self.stop_process)
+        print("OTHER")
+        if self.process:    
+            
+            print(self.process.pid, "HERE")
+            print("OVER")
         else:
-            os.getpid()
+            print("Create failed")
+
+
+
 if __name__ == '__main__':
     debug = Debug()
     debug.load("/bin/ls")
